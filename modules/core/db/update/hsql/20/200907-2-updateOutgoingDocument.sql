@@ -1,0 +1,9 @@
+alter table EDMS_OUTGOING_DOCUMENT add column RECONCILATION_RESULT varchar(255) ;
+alter table EDMS_OUTGOING_DOCUMENT add column RECONCILING_ID varchar(36) ;
+alter table EDMS_OUTGOING_DOCUMENT add column SENT_TO_ACT date ;
+alter table EDMS_OUTGOING_DOCUMENT add column ACT_ID varchar(36) ;
+alter table EDMS_OUTGOING_DOCUMENT add column RECONCILATION_START_DATE date ;
+alter table EDMS_OUTGOING_DOCUMENT add column RECONCILATION_COMPLETE_DATE date ;
+alter table EDMS_OUTGOING_DOCUMENT add column CONTENT varchar(255) ;
+alter table EDMS_OUTGOING_DOCUMENT add column COMMENT_ varchar(255) ;
+alter table EDMS_OUTGOING_DOCUMENT add column LOGBOOK_ID varchar(36) ;

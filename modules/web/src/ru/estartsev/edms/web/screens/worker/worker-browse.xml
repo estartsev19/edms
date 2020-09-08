@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/screen/window.xsd"
+        xmlns:c="http://schemas.haulmont.com/cuba/screen/jpql_condition.xsd"
+        caption="msg://workerBrowse.caption"
+        focusComponent="workersTable"
+        messagesPack="ru.estartsev.edms.web.screens.worker">
+    <data readOnly="true">
+        <collection id="workersDc"
+                    class="ru.estartsev.edms.entity.Worker"
+                    view="_local">
+            <loader id="workersDl">
+                <query>
+                    <![CDATA[select e from edms_Worker e]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <dialogMode height="600"
+                width="800"/>
+    <layout expand="workersTable"
+            spacing="true">
+        <filter id="filter"
+                applyTo="workersTable"
+                dataLoader="workersDl">
+            <properties include=".*"/>
+        </filter>
+        <groupTable id="workersTable"
+                    width="100%"
+                    dataContainer="workersDc">
+            <actions>
+                <action id="create" type="create"/>
+                <action id="edit" type="edit"/>
+                <action id="remove" type="remove"/>
+            </actions>
+            <columns>
+                <column id="personnelNumber"/>
+                <column id="lastName"/>
+                <column id="firstName"/>
+                <column id="patronymic"/>
+                <column id="email"/>
+                <column id="phoneNumber"/>
+            </columns>
+            <rowsCount/>
+            <buttonsPanel id="buttonsPanel"
+                          alwaysVisible="true">
+                <button id="createBtn" action="workersTable.create"/>
+                <button id="editBtn" action="workersTable.edit"/>
+                <button id="removeBtn" action="workersTable.remove"/>
+            </buttonsPanel>
+        </groupTable>
+        <hbox id="lookupActions" spacing="true" visible="false">
+            <button action="lookupSelectAction"/>
+            <button action="lookupCancelAction"/>
+        </hbox>
+    </layout>
+</window>

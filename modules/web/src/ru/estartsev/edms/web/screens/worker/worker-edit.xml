@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/screen/window.xsd"
+        caption="msg://workerEdit.caption"
+        focusComponent="form"
+        messagesPack="ru.estartsev.edms.web.screens.worker">
+    <data>
+        <instance id="workerDc"
+                  class="ru.estartsev.edms.entity.Worker"
+                  view="worker-view-with-image">
+            <loader/>
+        </instance>
+    </data>
+    <dialogMode height="600"
+                width="800"/>
+    <layout expand="editActions" spacing="true">
+        <form id="form" dataContainer="workerDc" width="90%">
+            <column width="350px">
+                <image id="image" property="photo" width="100px" height="100px" align="MIDDLE_CENTER"
+                       scaleMode="CONTAIN"/>
+                <textField id="personnelNumberField" property="personnelNumber"/>
+                <pickerField id="userField" property="user"/>
+                <textField id="lastNameField" property="lastName"/>
+                <textField id="firstNameField" property="firstName"/>
+                <textField id="patronymicField" property="patronymic"/>
+                <pickerField id="departmentField" property="department">
+                    <actions>
+                        <action id="lookup" type="picker_lookup"/>
+                        <action id="clear" type="picker_clear"/>
+                    </actions>
+                </pickerField>
+                <textField id="emailField" property="email"/>
+                <maskedField id="phoneNumberField" mask="+7(###)###-##-##" property="phoneNumber"/>
+                <upload fileStoragePutMode="IMMEDIATE" dataContainer="workerDc" property="photo" />
+            </column>
+        </form>
+        <hbox id="editActions" spacing="true">
+            <button action="windowCommitAndClose"/>
+            <button action="windowClose"/>
+        </hbox>
+    </layout>
+</window>

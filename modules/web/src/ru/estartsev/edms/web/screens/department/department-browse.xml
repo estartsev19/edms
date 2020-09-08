@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/screen/window.xsd"
+        xmlns:c="http://schemas.haulmont.com/cuba/screen/jpql_condition.xsd"
+        caption="msg://departmentBrowse.caption"
+        focusComponent="departmentsTable"
+        messagesPack="ru.estartsev.edms.web.screens.department">
+    <data readOnly="true">
+        <collection id="departmentsDc"
+                    class="ru.estartsev.edms.entity.Department"
+                    view="department-browseView">
+            <loader id="departmentsDl">
+                <query>
+                    <![CDATA[select e from edms_Department e]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <dialogMode height="600"
+                width="800"/>
+    <layout expand="departmentsTable"
+            spacing="true">
+        <filter id="filter"
+                applyTo="departmentsTable"
+                dataLoader="departmentsDl">
+            <properties include=".*"/>
+        </filter>
+        <groupTable id="departmentsTable"
+                    width="100%"
+                    dataContainer="departmentsDc">
+            <actions>
+                <action id="create" type="create"/>
+                <action id="edit" type="edit"/>
+                <action id="remove" type="remove"/>
+            </actions>
+            <columns>
+                <column id="code"/>
+                <column id="title"/>
+                <column id="leadDepartment"/>
+                <column id="departmentManager"/>
+            </columns>
+            <rowsCount/>
+            <buttonsPanel id="buttonsPanel"
+                          alwaysVisible="true">
+                <button id="createBtn" action="departmentsTable.create"/>
+                <button id="editBtn" action="departmentsTable.edit"/>
+                <button id="removeBtn" action="departmentsTable.remove"/>
+            </buttonsPanel>
+        </groupTable>
+        <hbox id="lookupActions" spacing="true" visible="false">
+            <button action="lookupSelectAction"/>
+            <button action="lookupCancelAction"/>
+        </hbox>
+    </layout>
+</window>

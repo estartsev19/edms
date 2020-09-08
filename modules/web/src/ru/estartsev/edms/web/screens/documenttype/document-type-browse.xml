@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/screen/window.xsd"
+        xmlns:c="http://schemas.haulmont.com/cuba/screen/jpql_condition.xsd"
+        caption="msg://documentTypeBrowse.caption"
+        focusComponent="documentTypesTable"
+        messagesPack="ru.estartsev.edms.web.screens.documenttype">
+    <data readOnly="true">
+        <collection id="documentTypesDc"
+                    class="ru.estartsev.edms.entity.DocumentType"
+                    view="_local">
+            <loader id="documentTypesDl">
+                <query>
+                    <![CDATA[select e from edms_DocumentType e]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <dialogMode height="600"
+                width="800"/>
+    <layout expand="documentTypesTable"
+            spacing="true">
+        <filter id="filter"
+                applyTo="documentTypesTable"
+                dataLoader="documentTypesDl">
+            <properties include=".*"/>
+        </filter>
+        <groupTable id="documentTypesTable"
+                    width="100%"
+                    dataContainer="documentTypesDc">
+            <actions>
+                <action id="create" type="create"/>
+                <action id="edit" type="edit"/>
+                <action id="remove" type="remove"/>
+            </actions>
+            <columns>
+                <column id="code"/>
+                <column id="title"/>
+            </columns>
+            <rowsCount/>
+            <buttonsPanel id="buttonsPanel"
+                          alwaysVisible="true">
+                <button id="createBtn" action="documentTypesTable.create"/>
+                <button id="editBtn" action="documentTypesTable.edit"/>
+                <button id="removeBtn" action="documentTypesTable.remove"/>
+            </buttonsPanel>
+        </groupTable>
+        <hbox id="lookupActions" spacing="true" visible="false">
+            <button action="lookupSelectAction"/>
+            <button action="lookupCancelAction"/>
+        </hbox>
+    </layout>
+</window>
