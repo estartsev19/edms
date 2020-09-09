@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <window xmlns="http://schemas.haulmont.com/cuba/screen/window.xsd"
         caption="msg://outgoingDocumentEdit.caption"
-        focusComponent="form"
+        focusComponent="mainForm"
         messagesPack="ru.estartsev.edms.web.screens.outgoingdocument">
     <data>
         <instance id="outgoingDocumentDc"
@@ -15,79 +15,103 @@
                 width="800"/>
     <layout expand="scrollBox" spacing="true">
         <scrollBox id="scrollBox" spacing="true">
-            <form id="form" dataContainer="outgoingDocumentDc">
-                <column width="350px">
-                    <pickerField id="documentTypeField" property="documentType">
-                        <actions>
-                            <action id="lookup" type="picker_lookup"/>
-                            <action id="clear" type="picker_clear"/>
-                        </actions>
-                    </pickerField>
-                    <textField id="regNumberField" property="regNumber"/>
-                    <dateField id="registrationDateField" property="registrationDate" editable="false"/>
-                    <pickerField id="destinationField" property="destination">
-                        <actions>
-                            <action id="lookup" type="picker_lookup"/>
-                            <action id="clear" type="picker_clear"/>
-                        </actions>
-                    </pickerField>
-                    <textField id="recipientField" property="recipient"/>
-                    <textField id="themeField" property="theme"/>
-                    <textField id="executorField" property="executor" editable="false"/>
-                    <pickerField id="signerField" property="signer">
-                        <actions>
-                            <action id="lookup" type="picker_lookup"/>
-                            <action id="clear" type="picker_clear"/>
-                        </actions>
-                    </pickerField>
-                    <textField id="footnoteField" property="footnote"/>
-                    <textField id="titleField" property="title"/>
-                    <dateField id="dateCreationField" property="dateCreation" editable="false"/>
-                    <dateField id="dateChangeField" property="dateChange"/>
-                    <lookupField id="statusField" property="status"/>
-                    <pickerField id="logbookField" property="logbook">
-                        <actions>
-                            <action id="lookup" type="picker_lookup"/>
-                            <action id="clear" type="picker_clear"/>
-                        </actions>
-                    </pickerField>
-                    <textField id="contentField" property="content"/>
-                    <pickerField id="actField" property="act">
-                        <actions>
-                            <action id="lookup" type="picker_lookup"/>
-                            <action id="clear" type="picker_clear"/>
-                        </actions>
-                    </pickerField>
-                    <dateField id="sentToActField" property="sentToAct"/>
-                    <pickerField id="reconcilingField" property="reconciling">
-                        <actions>
-                            <action id="lookup" type="picker_lookup"/>
-                            <action id="clear" type="picker_clear"/>
-                        </actions>
-                    </pickerField>
-                    <dateField id="reconcilationStartDateField" property="reconcilationStartDate"/>
-                    <dateField id="reconcilationCompleteDateField" property="reconcilationCompleteDate"/>
-                    <textField id="reconcilationResultField" property="reconcilationResult"/>
-                    <textField id="commentField" property="comment"/>
-                </column>
-            </form>
-            <groupBox id="fileBox" caption="msg://ru.estartsev.edms.entity/OutgoingDocument.file">
-                <table id="fileTable" dataContainer="fileDc" width="100%" height="200px">
-                    <actions>
-                        <action id="add" type="add"/>
-                        <action id="exclude" type="exclude"/>
-                    </actions>
-                    <columns>
-                        <column id="name"/>
-                        <column id="createDate"/>
-                        <column id="extension"/>
-                    </columns>
-                    <buttonsPanel>
-                        <button action="fileTable.add"/>
-                        <button action="fileTable.exclude"/>
-                    </buttonsPanel>
-                </table>
-            </groupBox>
+            <tabSheet>
+                <tab id="mainTab" caption="Основная" margin="true" spacing="true">
+                    <form id="mainForm" dataContainer="outgoingDocumentDc">
+                        <column width="350px">
+                            <pickerField id="documentTypeField" property="documentType">
+                                <actions>
+                                    <action id="lookup" type="picker_lookup"/>
+                                    <action id="clear" type="picker_clear"/>
+                                </actions>
+                            </pickerField>
+                            <textField id="regNumberField" property="regNumber" editable="false"/>
+                            <dateField id="registrationDateField" property="registrationDate" editable="false"/>
+                            <pickerField id="destinationField" property="destination">
+                                <actions>
+                                    <action id="lookup" type="picker_lookup"/>
+                                    <action id="clear" type="picker_clear"/>
+                                </actions>
+                            </pickerField>
+                            <textField id="recipientField" property="recipient"/>
+                            <textField id="themeField" property="theme"/>
+                            <textField id="executorField" property="executor" editable="false"/>
+                            <pickerField id="signerField" property="signer">
+                                <actions>
+                                    <action id="lookup" type="picker_lookup"/>
+                                    <action id="clear" type="picker_clear"/>
+                                </actions>
+                            </pickerField>
+                            <textField id="footnoteField" property="footnote"/>
+                            <textField id="titleField" property="title" editable="false"/>
+                            <dateField id="dateCreationField" property="dateCreation" editable="false"/>
+                            <dateField id="dateChangeField" property="dateChange" editable="false"/>
+                            <lookupField id="statusField" property="status" editable="false"/>
+                        </column>
+                    </form>
+                </tab>
+                <tab id="fileTab" caption="Документы" spacing="true" margin="true">
+                    <form id="fileForm" dataContainer="outgoingDocumentDc">
+                        <column width="350px">
+                            <groupBox id="fileBox" caption="msg://ru.estartsev.edms.entity/OutgoingDocument.file">
+                                <table id="fileTable" dataContainer="fileDc" width="100%" height="200px">
+                                    <actions>
+                                        <action id="add" type="add"/>
+                                        <action id="exclude" type="exclude"/>
+                                    </actions>
+                                    <columns>
+                                        <column id="name"/>
+                                        <column id="createDate"/>
+                                        <column id="extension"/>
+                                    </columns>
+                                    <buttonsPanel>
+                                        <button action="fileTable.add"/>
+                                        <button action="fileTable.exclude"/>
+                                    </buttonsPanel>
+                                </table>
+                            </groupBox>
+                        </column>
+                    </form>
+                </tab>
+                <tab id="registrationTab" caption="Регистрация" spacing="true" margin="true">
+                    <form id="registrationForm" dataContainer="outgoingDocumentDc">
+                        <column width="350px">
+                            <pickerField id="logbookField" property="logbook">
+                                <actions>
+                                    <action id="lookup" type="picker_lookup"/>
+                                    <action id="clear" type="picker_clear"/>
+                                </actions>
+                            </pickerField>
+                            <textField id="regNumberField2" property="regNumber" editable="false"/>
+                            <dateField id="registrationDateField2" property="registrationDate" editable="false"/>
+                            <textField id="contentField" property="content"/>
+                            <pickerField id="actField" property="act">
+                                <actions>
+                                    <action id="lookup" type="picker_lookup"/>
+                                    <action id="clear" type="picker_clear"/>
+                                </actions>
+                            </pickerField>
+                            <dateField id="sentToActField" property="sentToAct" editable="false"/>
+                        </column>
+                    </form>
+                </tab>
+                <tab id="reconcilingTab" caption="Согласование" spacing="true" margin="true">
+                    <form id="reconcilingForm" dataContainer="outgoingDocumentDc">
+                        <column width="350px">
+                            <pickerField id="reconcilingField" property="reconciling">
+                                <actions>
+                                    <action id="lookup" type="picker_lookup"/>
+                                    <action id="clear" type="picker_clear"/>
+                                </actions>
+                            </pickerField>
+                            <dateField id="reconcilationStartDateField" property="reconcilationStartDate" editable="false"/>
+                            <dateField id="reconcilationCompleteDateField" property="reconcilationCompleteDate" editable="false"/>
+                            <textField id="reconcilationResultField" property="reconcilationResult" editable="false"/>
+                            <textField id="commentField" property="comment" editable="false"/>
+                        </column>
+                    </form>
+                </tab>
+            </tabSheet>
         </scrollBox>
         <hbox id="editActions" spacing="true">
             <button action="windowCommitAndClose"/>

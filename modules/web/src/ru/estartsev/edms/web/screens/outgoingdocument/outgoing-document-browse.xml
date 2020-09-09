@@ -33,17 +33,12 @@
                 <action id="remove" type="remove"/>
             </actions>
             <columns>
-                <column id="regNumber"/>
-                <column id="registrationDate"/>
                 <column id="recipient"/>
-                <column id="theme"/>
-                <column id="footnote"/>
                 <column id="title"/>
                 <column id="dateCreation"/>
                 <column id="dateChange"/>
                 <column id="status"/>
                 <column id="content"/>
-                <column id="sentToAct"/>
                 <column id="reconcilationStartDate"/>
                 <column id="reconcilationCompleteDate"/>
                 <column id="reconcilationResult"/>
