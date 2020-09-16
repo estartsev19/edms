@@ -19,11 +19,11 @@ public class DepartmentEdit extends StandardEditor<Department> {
     @Subscribe
     protected void onBeforeClose(BeforeCloseEvent event) {
         Department department = getEditedEntity();
-        if (department.getLeadDepartment() != null) {
-            if (department.getLeadDepartment().getCode().equals(department.getCode())) {
-                notifications.create().withCaption("Текущее подразделение не может быть ведущим подразделением").show();
+        if (department.getLeadDepartment() != null && department.getLeadDepartment().getCode().equals(department.getCode())) {
+                notifications.create()
+                        .withCaption("Текущее подразделение не может быть ведущим подразделением")
+                        .show();
                 event.preventWindowClose();
-            }
         }
     }
 }

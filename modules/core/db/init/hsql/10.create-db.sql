@@ -27,7 +27,6 @@ create table EDMS_OUTGOING_DOCUMENT (
     CONTENT varchar(255),
     ACT_ID varchar(36),
     SENT_TO_ACT date,
-    RECONCILING_ID varchar(36),
     RECONCILATION_START_DATE date,
     RECONCILATION_COMPLETE_DATE date,
     RECONCILATION_RESULT varchar(255),

@@ -102,11 +102,6 @@ public class OutgoingDocument extends StandardEntity {
     @Column(name = "SENT_TO_ACT")
     private Date sentToAct;
 
-    @OnDelete(DeletePolicy.UNLINK)
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "RECONCILING_ID")
-    private Worker reconciling;
-
     @Temporal(TemporalType.DATE)
     @Column(name = "RECONCILATION_START_DATE")
     private Date reconcilationStartDate;
@@ -167,14 +162,6 @@ public class OutgoingDocument extends StandardEntity {
 
     public void setReconcilationStartDate(Date reconcilationStartDate) {
         this.reconcilationStartDate = reconcilationStartDate;
-    }
-
-    public Worker getReconciling() {
-        return reconciling;
-    }
-
-    public void setReconciling(Worker reconciling) {
-        this.reconciling = reconciling;
     }
 
     public Date getSentToAct() {
@@ -318,7 +305,6 @@ public class OutgoingDocument extends StandardEntity {
         return regNumber;
     }
 
-    //other methods
     private Date today(){
         Date date = new Date();
         return date;

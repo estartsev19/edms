@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/screen/window.xsd"
+        xmlns:ext="http://schemas.haulmont.com/cuba/window-ext.xsd"
+        messagesPack="ru.estartsev.edms.web.screens.process">
+    <data>
+        <collection id="workerDc" class="ru.estartsev.edms.entity.Worker" view="worker-view-with-image">
+            <loader/>
+        </collection>
+        <collection id="procActorDc"
+                    class="com.haulmont.bpm.entity.ProcActor"
+                    view="procActor-browse">
+            <loader/>
+        </collection>
+    </data>
+    <layout spacing="true">
+        <form id="form" width="90%">
+            <table id="procActorsTable"
+                   dataContainer="procActorDc"
+                   height="90%"
+                   width="90%">
+                <columns>
+                    <column id="user"/>
+                    <column id="procRole"/>
+                </columns>
+                <rowsCount/>
+            </table>
+            <lookupField id="workerLookupField" caption="Worker" dataContainer="workerDc" property="user"/>
+            <button id="addActorButton" caption="Add reconciler"/>
+        </form>
+        <hbox spacing="true">
+            <button id="okButton" invoke="onWindowCommit" caption="OK"/>
+            <button id="cancelButton" invoke="onWindowClose" caption="CLOSE"/>
+        </hbox>
+    </layout>
+</window>

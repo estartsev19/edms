@@ -16,11 +16,11 @@ public class ApprovalHelper {
     @Inject
     private Persistence persistence;
 
-    public void updateState(UUID entityId, OutgoingDocumentStatus status) {
+    public void updateState(UUID entityId, int status) {
         try (Transaction tx = persistence.getTransaction()) {
             OutgoingDocument outgoingDocument = persistence.getEntityManager().find(OutgoingDocument.class, entityId);
             if (outgoingDocument != null) {
-                outgoingDocument.setStatus(status);
+                outgoingDocument.setStatus(OutgoingDocumentStatus.fromId(status));
             }
             tx.commit();
         }
