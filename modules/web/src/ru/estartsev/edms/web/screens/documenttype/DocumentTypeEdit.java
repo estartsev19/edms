@@ -2,7 +2,6 @@ package ru.estartsev.edms.web.screens.documenttype;
 
 import com.haulmont.cuba.gui.screen.*;
 import ru.estartsev.edms.entity.DocumentType;
-import ru.estartsev.edms.entity.Logbook;
 import ru.estartsev.edms.service.entityServices.DocumentTypeService;
 
 import javax.inject.Inject;

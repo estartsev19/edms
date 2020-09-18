@@ -8,6 +8,7 @@
                   class="ru.estartsev.edms.entity.OutgoingDocument"
                   view="outgoingDocument-editView">
             <loader id="outgoingDocumentDl"/>
+            <collection id="filesDc" property="file"/>
         </instance>
         <collection id="procAttachmentsDc"
                     class="com.haulmont.bpm.entity.ProcAttachment"
@@ -61,24 +62,26 @@
                     </form>
                 </tab>
                 <tab id="fileTab" caption="Документы" spacing="true" margin="true">
-                    <form id="attachmentsForm" dataContainer="outgoingDocumentDc">
+                    <form id="filesForm" dataContainer="outgoingDocumentDc">
                         <column width="350px">
-                            <groupBox caption="msg://attachments"
+                            <groupBox caption="Документы"
                                       height="300px"
                                       spacing="true"
                                       width="700px">
-                                <table id="attachmentsTable"
-                                       dataContainer="procAttachmentsDc"
-                                       height="100%"
-                                       width="100%">
+                                <table id="filesTable" dataContainer="filesDc" width="100%">
                                     <columns>
-                                        <column id="file.name"/>
-                                        <column id="type"/>
-                                        <column id="comment"
-                                                maxTextLength="50"/>
+                                        <column id="name"/>
+                                        <column id="size"/>
                                     </columns>
-                                    <rowsCount/>
+                                    <rows/>
+                                    <buttonsPanel>
+                                        <upload id="addAttachmentField"/>
+                                        <button id="downloadButton"
+                                                caption="Скачать"
+                                                invoke="downloadFile"></button>
+                                    </buttonsPanel>
                                 </table>
+
                             </groupBox>
                         </column>
                     </form>
@@ -107,20 +110,20 @@
                 </tab>
                 <tab id="reconcilingTab" caption="Согласование" spacing="true" margin="true">
                     <form id="reconcilingForm" dataContainer="outgoingDocumentDc">
-                            <dateField id="reconcilationStartDateField" property="reconcilationStartDate"
-                                       editable="false"/>
-                            <dateField id="reconcilationCompleteDateField" property="reconcilationCompleteDate"
-                                       editable="false"/>
-                            <textField id="reconcilationResultField" property="reconcilationResult" editable="false"/>
-                            <textField id="commentField" property="comment" editable="false"/>
-                            <groupBox id="procActionsBox"
-                                      caption="msg://process"
-                                      spacing="true"
-                                      width="AUTO"
-                                      orientation="vertical">
-                                <fragment id="procActionsFragment"
-                                          screen="bpm_ProcActionsFragment"/>
-                            </groupBox>
+                        <dateField id="reconcilationStartDateField" property="reconcilationStartDate"
+                                   editable="false"/>
+                        <dateField id="reconcilationCompleteDateField" property="reconcilationCompleteDate"
+                                   editable="false"/>
+                        <textField id="reconcilationResultField" property="reconcilationResult" editable="false"/>
+                        <textField id="commentField" property="comment" editable="false"/>
+                        <groupBox id="procActionsBox"
+                                  caption="msg://process"
+                                  spacing="true"
+                                  width="AUTO"
+                                  orientation="vertical">
+                            <fragment id="procActionsFragment"
+                                      screen="bpm_ProcActionsFragment"/>
+                        </groupBox>
                     </form>
                 </tab>
             </tabSheet>

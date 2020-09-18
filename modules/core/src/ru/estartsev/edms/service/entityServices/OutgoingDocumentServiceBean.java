@@ -1,7 +1,6 @@
 package ru.estartsev.edms.service.entityServices;
 
 import com.haulmont.bpm.entity.ProcActor;
-import com.haulmont.bpm.entity.ProcDefinition;
 import com.haulmont.bpm.entity.ProcInstance;
 import com.haulmont.bpm.entity.ProcRole;
 import com.haulmont.bpm.service.BpmEntitiesService;
@@ -44,14 +43,13 @@ public class OutgoingDocumentServiceBean implements OutgoingDocumentService {
                 .query("SELECT e FROM edms_Worker e where e.user = :currentUser")
                 .parameter("currentUser", currentUser)
                 .one();
-
     }
 
     @Override
     public String setRegNumberFromTemplate(String template, LocalDate date, int numberOfDigits) {
         int number = Integer.valueOf(codeCreator.createCode("", "outgoingDocumentSequence"));
         String zeroString = "";
-        for (int i = 0; i < numberOfDigits; i++){
+        for (int i = 0; i < numberOfDigits; i++) {
             zeroString = zeroString.concat("0");
         }
         DecimalFormat df = new DecimalFormat(zeroString);
@@ -76,13 +74,13 @@ public class OutgoingDocumentServiceBean implements OutgoingDocumentService {
             }
             template = template.replace("MM", month);
         }
-        if (template.contains("YYYY")){
+        if (template.contains("YYYY")) {
             String year = String.valueOf(date.getYear());
             template = template.replace("YYYY", year);
             template = template.concat(str);
             return template;
         }
-        if (template.contains("YY")){
+        if (template.contains("YY")) {
             int yearNum = date.getYear() % 100;
             String year = String.valueOf(yearNum);
             template = template.replace("YY", year);
@@ -95,7 +93,12 @@ public class OutgoingDocumentServiceBean implements OutgoingDocumentService {
 
     @Override
     public String setTitleForNewDocument(DocumentType documentType, String regNumber, LocalDate date,
-                                         String destination, String theme){
+                                         String destination, String theme) {
+        if (regNumber == null) {
+            return documentType.getTitle() + " от " +
+                    date.getDayOfMonth() + "." + date.getMonthValue() + "." + date.getYear()
+                    + " в " + destination + ", " + theme;
+        }
         return documentType.getTitle() + " № " + regNumber + " от " +
                 date.getDayOfMonth() + "." + date.getMonthValue() + "." + date.getYear()
                 + " в " + destination + ", " + theme;

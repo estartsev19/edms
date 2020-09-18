@@ -13,6 +13,6 @@ public class EntityCodeCreator {
     UniqueNumbers uniqueNumbers;
 
     public String createCode(String prefix, String sequence){
-        return prefix + uniqueNumbers.getNextNumber(sequence);
+        return String.format("%s%06d", prefix, uniqueNumbers.getNextNumber(sequence));
     }
 }

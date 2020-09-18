@@ -77,12 +77,12 @@ public class OutgoingDocument extends StandardEntity {
     @Column(name = "STATUS")
     private Integer status;
 
-    @JoinTable(name = "EDMS_OUTGOING_DOCUMENT_FILE_DESCRIPTOR_LINK",
-            joinColumns = @JoinColumn(name = "OUTGOING_DOCUMENT_ID"),
-            inverseJoinColumns = @JoinColumn(name = "FILE_DESCRIPTOR_ID"))
     @OnDeleteInverse(DeletePolicy.UNLINK)
     @OnDelete(DeletePolicy.CASCADE)
     @ManyToMany
+    @JoinTable(name = "EDMS_OUTGOING_DOCUMENT_FILE_DESCRIPTOR_LINK",
+            joinColumns = @JoinColumn(name = "OUTGOING_DOCUMENT_ID"),
+            inverseJoinColumns = @JoinColumn(name = "FILE_DESCRIPTOR_ID"))
     private List<FileDescriptor> file;
 
     @OnDelete(DeletePolicy.UNLINK)
@@ -115,6 +115,14 @@ public class OutgoingDocument extends StandardEntity {
 
     @Column(name = "COMMENT_")
     private String comment;
+
+    public void setFile(List<FileDescriptor> file) {
+        this.file = file;
+    }
+
+    public List<FileDescriptor> getFile() {
+        return file;
+    }
 
     public void setRegNumber(String regNumber) {
         this.regNumber = regNumber;
@@ -194,14 +202,6 @@ public class OutgoingDocument extends StandardEntity {
 
     public void setLogbook(Logbook logbook) {
         this.logbook = logbook;
-    }
-
-    public List<FileDescriptor> getFile() {
-        return file;
-    }
-
-    public void setFile(List<FileDescriptor> file) {
-        this.file = file;
     }
 
     public void setRegistrationDate(Date registrationDate) {

@@ -13,19 +13,20 @@
         </collection>
     </data>
     <layout spacing="true">
-        <form id="form" width="90%">
+        <form id="form">
+            <groupBox caption="Участники процесса" align="MIDDLE_LEFT">
             <table id="procActorsTable"
-                   dataContainer="procActorDc"
-                   height="90%"
-                   width="90%">
+                   dataContainer="procActorDc">
                 <columns>
                     <column id="user"/>
                     <column id="procRole"/>
                 </columns>
                 <rowsCount/>
             </table>
-            <lookupField id="workerLookupField" caption="Worker" dataContainer="workerDc" property="user"/>
-            <button id="addActorButton" caption="Add reconciler"/>
+            </groupBox>
+            <lookupField id="workerLookupField" caption="Выберите согласующего" dataContainer="workerDc"
+                         property="user"/>
+            <button id="addActorButton" caption="Добавить согласующего" align="MIDDLE_LEFT"/>
         </form>
         <hbox spacing="true">
             <button id="okButton" invoke="onWindowCommit" caption="OK"/>

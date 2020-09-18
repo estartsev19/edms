@@ -13,6 +13,6 @@ public class OrganizationServiceBean implements OrganizationService {
     EntityCodeCreator codeCreator;
 
     public String createCode(){
-        return codeCreator.createCode("ОРГ00000", "organizationSequence");
+        return codeCreator.createCode("ОРГ", "organizationSequence");
     }
 }

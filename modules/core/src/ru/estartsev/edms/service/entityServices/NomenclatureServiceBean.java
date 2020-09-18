@@ -13,6 +13,6 @@ public class NomenclatureServiceBean implements NomenclatureService {
 
     @Override
     public String createCode() {
-        return codeCreator.createCode("НД00000", "nomenclatureService");
+        return codeCreator.createCode("НД", "nomenclatureService");
     }
 }

@@ -1,7 +1,6 @@
 package ru.estartsev.edms.web.screens.nomenclature;
 
 import com.haulmont.cuba.gui.screen.*;
-import ru.estartsev.edms.entity.Logbook;
 import ru.estartsev.edms.entity.Nomenclature;
 import ru.estartsev.edms.service.entityServices.NomenclatureService;
 

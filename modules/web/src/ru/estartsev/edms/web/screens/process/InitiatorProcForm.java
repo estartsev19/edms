@@ -2,7 +2,6 @@ package ru.estartsev.edms.web.screens.process;
 
 import com.haulmont.bpm.entity.ProcActor;
 import com.haulmont.bpm.entity.ProcInstance;
-import com.haulmont.bpm.entity.ProcTask;
 import com.haulmont.bpm.gui.form.ProcForm;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.gui.WindowParam;

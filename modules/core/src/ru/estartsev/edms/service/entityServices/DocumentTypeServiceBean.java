@@ -13,6 +13,6 @@ public class DocumentTypeServiceBean implements DocumentTypeService {
 
     @Override
     public String createCode() {
-        return codeCreator.createCode("ВД00000", "documentTypeSequence");
+        return codeCreator.createCode("ВД", "documentTypeSequence");
     }
 }

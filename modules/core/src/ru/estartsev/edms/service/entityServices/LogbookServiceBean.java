@@ -12,6 +12,6 @@ public class LogbookServiceBean implements LogbookService {
     EntityCodeCreator codeCreator;
 
     public String createCode(){
-        return codeCreator.createCode("Ж00000", "logbookSequence");
+        return codeCreator.createCode("Ж", "logbookSequence");
     }
 }
