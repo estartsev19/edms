@@ -34,6 +34,9 @@ public class InitiatorProcForm extends Screen implements ProcForm {
     @WindowParam
     private ProcInstance procInstance;
 
+    @WindowParam
+    protected ProcTask procTask;
+
     @Inject
     LookupField<Worker> workerLookupField;
 
@@ -61,6 +64,12 @@ public class InitiatorProcForm extends Screen implements ProcForm {
                 .list();
         workerLookupField.setOptionsList(workerList);
         procActorDc.setItems(procInstance.getProcActors());
+        log.info("ProcTask: {}", procTask);
+    }
+
+    @Subscribe
+    public void onBeforeCommitChanger(BeforeCloseEvent event){
+        log.info("CLOSE: ProcTask: {}", procTask);
     }
 
     @Subscribe("addActorButton")
@@ -75,6 +84,11 @@ public class InitiatorProcForm extends Screen implements ProcForm {
 
     @Override
     public String getComment() {
+        if (procTask != null && procTask.getComment() != null){
+            log.info("Return not null comment: {}", procTask.getComment());
+            return procTask.getComment();
+        }
+        log.info("Return NULL comment");
         return null;
     }
 

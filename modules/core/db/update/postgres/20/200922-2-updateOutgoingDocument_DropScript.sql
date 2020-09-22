@@ -1,0 +1,4 @@
+alter table EDMS_OUTGOING_DOCUMENT drop column RECONCILATION_START_DATE__U23716 cascade ;
+alter table EDMS_OUTGOING_DOCUMENT drop column RECONCILATION_COMPLETE_DATE__U97391 cascade ;
+alter table EDMS_OUTGOING_DOCUMENT drop column RECONCILATION_RESULT__U50836 cascade ;
+alter table EDMS_OUTGOING_DOCUMENT drop column COMMENT___U38103 cascade ;

@@ -3,6 +3,7 @@ package ru.estartsev.edms.web.screens.outgoingdocument;
 import com.haulmont.bpm.entity.ProcActor;
 import com.haulmont.bpm.entity.ProcAttachment;
 import com.haulmont.bpm.entity.ProcInstance;
+import com.haulmont.bpm.entity.ProcTask;
 import com.haulmont.bpm.gui.procactionsfragment.ProcActionsFragment;
 import com.haulmont.cuba.core.entity.FileDescriptor;
 import com.haulmont.cuba.core.global.*;
@@ -77,6 +78,9 @@ public class OutgoingDocumentEdit extends StandardEditor<OutgoingDocument> {
     @Inject
     private Logger log;
 
+    @Inject
+    private Form processForm;
+
 
     @Subscribe
     private void onBeforeShow(BeforeShowEvent event) {
@@ -121,6 +125,9 @@ public class OutgoingDocumentEdit extends StandardEditor<OutgoingDocument> {
         if (entityStatus == 3) {
             mainTabSheet.getTab("registrationTab").setEnabled(true);
         }
+        if (entityStatus == 5) {
+            processForm.setEnabled(false);
+        }
     }
 
     @Subscribe
@@ -151,16 +158,7 @@ public class OutgoingDocumentEdit extends StandardEditor<OutgoingDocument> {
         if (document.getStatus().getId() == 2) {
             document.setDateChange(timeSource.currentTimestamp());
         }
-        document.setReconcilationStartDate(procActionsFragment
-                .getProcInstance()
-                .getStartDate());
-        Date endDate = procActionsFragment
-                .getProcInstance()
-                .getEndDate();
-        if (endDate != null) {
-            document.setReconcilationCompleteDate(endDate);
-        }
-        if (document.getUpdateTs() != null){
+         if (document.getUpdateTs() != null) {
             document.setDateChange(document.getUpdateTs());
         }
         dataManager.commit(document);

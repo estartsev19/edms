@@ -101,20 +101,6 @@ public class OutgoingDocument extends StandardEntity {
     @Column(name = "SENT_TO_ACT")
     private Date sentToAct;
 
-    @Temporal(TemporalType.DATE)
-    @Column(name = "RECONCILATION_START_DATE")
-    private Date reconcilationStartDate;
-
-    @Temporal(TemporalType.DATE)
-    @Column(name = "RECONCILATION_COMPLETE_DATE")
-    private Date reconcilationCompleteDate;
-
-    @Column(name = "RECONCILATION_RESULT")
-    private String reconcilationResult;
-
-    @Column(name = "COMMENT_")
-    private String comment;
-
     public void setFile(List<FileDescriptor> file) {
         this.file = file;
     }
@@ -137,38 +123,6 @@ public class OutgoingDocument extends StandardEntity {
 
     public void setDateCreation(Date dateCreation) {
         this.dateCreation = dateCreation;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
-    public String getReconcilationResult() {
-        return reconcilationResult;
-    }
-
-    public void setReconcilationResult(String reconcilationResult) {
-        this.reconcilationResult = reconcilationResult;
-    }
-
-    public Date getReconcilationCompleteDate() {
-        return reconcilationCompleteDate;
-    }
-
-    public void setReconcilationCompleteDate(Date reconcilationCompleteDate) {
-        this.reconcilationCompleteDate = reconcilationCompleteDate;
-    }
-
-    public Date getReconcilationStartDate() {
-        return reconcilationStartDate;
-    }
-
-    public void setReconcilationStartDate(Date reconcilationStartDate) {
-        this.reconcilationStartDate = reconcilationStartDate;
     }
 
     public Date getSentToAct() {

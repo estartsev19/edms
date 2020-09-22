@@ -39,10 +39,6 @@
                 <column id="dateChange"/>
                 <column id="status"/>
                 <column id="content"/>
-                <column id="reconcilationStartDate"/>
-                <column id="reconcilationCompleteDate"/>
-                <column id="reconcilationResult"/>
-                <column id="comment"/>
             </columns>
             <rowsCount/>
             <buttonsPanel id="buttonsPanel"

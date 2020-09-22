@@ -109,14 +109,6 @@
                     </form>
                 </tab>
                 <tab id="reconcilingTab" caption="Согласование" spacing="true" margin="true">
-                    <form id="reconcilingForm" dataContainer="outgoingDocumentDc">
-                        <dateField id="reconcilationStartDateField" property="reconcilationStartDate"
-                                   editable="false"/>
-                        <dateField id="reconcilationCompleteDateField" property="reconcilationCompleteDate"
-                                   editable="false"/>
-                        <textField id="reconcilationResultField" property="reconcilationResult" editable="false"/>
-                        <textField id="commentField" property="comment" editable="false"/>
-                    </form>
                     <form id="processForm">
                         <groupBox id="procActionsBox"
                                   caption="msg://process"

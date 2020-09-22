@@ -1,0 +1,4 @@
+alter table EDMS_OUTGOING_DOCUMENT rename column comment_ to comment___u38103 ;
+alter table EDMS_OUTGOING_DOCUMENT rename column reconcilation_result to reconcilation_result__u50836 ;
+alter table EDMS_OUTGOING_DOCUMENT rename column reconcilation_complete_date to reconcilation_complete_date__u97391 ;
+alter table EDMS_OUTGOING_DOCUMENT rename column reconcilation_start_date to reconcilation_start_date__u23716 ;
