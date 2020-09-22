@@ -24,9 +24,11 @@
                 <rowsCount/>
             </table>
             </groupBox>
-            <lookupField id="workerLookupField" caption="Выберите согласующего" dataContainer="workerDc"
+            <groupBox caption="Добавить согласующего" align="MIDDLE_LEFT" spacing="true">
+            <lookupField id="workerLookupField" caption="Работник" dataContainer="workerDc"
                          property="user"/>
-            <button id="addActorButton" caption="Добавить согласующего" align="MIDDLE_LEFT"/>
+            <button id="addActorButton" caption="Добавить"/>
+            </groupBox>
         </form>
         <hbox spacing="true">
             <button id="okButton" invoke="onWindowCommit" caption="OK"/>

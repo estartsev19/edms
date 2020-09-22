@@ -8,7 +8,6 @@ import com.haulmont.cuba.core.entity.annotation.OnDeleteInverse;
 import com.haulmont.cuba.core.global.DeletePolicy;
 import com.haulmont.cuba.security.entity.User;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
@@ -208,11 +207,6 @@ public class OutgoingDocument extends StandardEntity {
         this.registrationDate = registrationDate;
     }
 
-    @PostConstruct
-    private void init(){
-        setRegistrationDate(today());
-    }
-
     public Date getDateChange() {
         return dateChange;
     }
@@ -305,8 +299,4 @@ public class OutgoingDocument extends StandardEntity {
         return regNumber;
     }
 
-    private Date today(){
-        Date date = new Date();
-        return date;
-    }
 }

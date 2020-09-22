@@ -31,8 +31,9 @@
         </property>
         <property name="departmentManager" view="_minimal"/>
     </view>
-    <view entity="edms_OutgoingDocument" name="outgoingDocument-editView">
+    <view entity="edms_OutgoingDocument" name="outgoingDocument-editView" systemProperties="true" extends="_minimal">
         <property name="documentType" view="_minimal">
+            <property name="code"/>
         </property>
         <property name="regNumber"/>
         <property name="registrationDate"/>
@@ -52,7 +53,6 @@
             <property name="user" view="_minimal"/>
         </property>
         <property name="footnote"/>
-        <property name="title"/>
         <property name="dateCreation"/>
         <property name="dateChange"/>
         <property name="status"/>

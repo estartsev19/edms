@@ -1,7 +1,6 @@
 package ru.estartsev.edms.core;
 
-import com.haulmont.cuba.core.Persistence;
-import com.haulmont.cuba.core.Transaction;
+import com.haulmont.cuba.core.global.DataManager;
 import org.springframework.stereotype.Component;
 import ru.estartsev.edms.entity.OutgoingDocument;
 import ru.estartsev.edms.entity.OutgoingDocumentStatus;
@@ -14,15 +13,17 @@ public class ApprovalHelper {
     public static final String NAME = "edms_ApprovalHelper";
 
     @Inject
-    private Persistence persistence;
+    DataManager dataManager;
+
 
     public void updateState(UUID entityId, int status) {
-        try (Transaction tx = persistence.getTransaction()) {
-            OutgoingDocument outgoingDocument = persistence.getEntityManager().find(OutgoingDocument.class, entityId);
+            OutgoingDocument outgoingDocument = dataManager.load(OutgoingDocument.class)
+                    .query("select e from edms_OutgoingDocument e where e.id = :id")
+                    .parameter("id", entityId)
+                    .one();
             if (outgoingDocument != null) {
                 outgoingDocument.setStatus(OutgoingDocumentStatus.fromId(status));
             }
-            tx.commit();
-        }
+            dataManager.commit(outgoingDocument);
     }
 }

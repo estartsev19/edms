@@ -116,6 +116,8 @@
                                    editable="false"/>
                         <textField id="reconcilationResultField" property="reconcilationResult" editable="false"/>
                         <textField id="commentField" property="comment" editable="false"/>
+                    </form>
+                    <form id="processForm">
                         <groupBox id="procActionsBox"
                                   caption="msg://process"
                                   spacing="true"

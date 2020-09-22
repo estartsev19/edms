@@ -1,19 +1,20 @@
 package ru.estartsev.edms.web.screens.outgoingdocument;
 
+import com.haulmont.bpm.entity.ProcActor;
 import com.haulmont.bpm.entity.ProcAttachment;
+import com.haulmont.bpm.entity.ProcInstance;
 import com.haulmont.bpm.gui.procactionsfragment.ProcActionsFragment;
-import com.haulmont.cuba.core.entity.Entity;
 import com.haulmont.cuba.core.entity.FileDescriptor;
 import com.haulmont.cuba.core.global.*;
 import com.haulmont.cuba.gui.Notifications;
-import com.haulmont.cuba.gui.app.core.file.FileDownloadHelper;
 import com.haulmont.cuba.gui.components.*;
-import com.haulmont.cuba.gui.components.actions.BaseAction;
 import com.haulmont.cuba.gui.export.ExportDisplay;
 import com.haulmont.cuba.gui.model.*;
 import com.haulmont.cuba.gui.screen.*;
-import com.haulmont.cuba.gui.upload.FileUploading;
 import com.haulmont.cuba.gui.upload.FileUploadingAPI;
+import com.haulmont.cuba.gui.util.OperationResult;
+import com.haulmont.cuba.security.entity.User;
+import org.slf4j.Logger;
 import ru.estartsev.edms.entity.*;
 import ru.estartsev.edms.service.entityServices.OutgoingDocumentService;
 
@@ -21,8 +22,7 @@ import javax.inject.Inject;
 import java.io.File;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @UiController("edms_OutgoingDocument.edit")
 @UiDescriptor("outgoing-document-edit.xml")
@@ -74,6 +74,10 @@ public class OutgoingDocumentEdit extends StandardEditor<OutgoingDocument> {
     @Inject
     private ExportDisplay exportDisplay;
 
+    @Inject
+    private Logger log;
+
+
     @Subscribe
     private void onBeforeShow(BeforeShowEvent event) {
         outgoingDocumentDl.load();
@@ -81,9 +85,40 @@ public class OutgoingDocumentEdit extends StandardEditor<OutgoingDocument> {
         procAttachmentsDl.load();
         procActionsFragment.initializer()
                 .standard()
+                .setBeforeStartProcessPredicate(() -> {
+                    if (commitChanges().getStatus() == OperationResult.Status.SUCCESS) {
+                        ProcInstance procInstance = procActionsFragment.getProcInstance();
+                        OutgoingDocument outgoingDocument = getEditedEntity();
+                        Set<ProcActor> procActors = new HashSet<>();
+                        Worker executor = dataManager.load(Worker.class).view("worker-view-with-image")
+                                .id(outgoingDocument.getExecutor().getId())
+                                .one();
+                        User executorUser = executor.getUser();
+                        ProcActor initiatorProcActor = outgoingDocumentService
+                                .createProcActor("initiator", procInstance, executorUser);
+                        User managerUser = outgoingDocument
+                                .getExecutor()
+                                .getDepartment()
+                                .getDepartmentManager()
+                                .getUser();
+                        ProcActor managerProcActor = outgoingDocumentService
+                                .createProcActor("manager", procInstance, managerUser);
+                        procActors.add(initiatorProcActor);
+                        procActors.add(managerProcActor);
+                        if (outgoingDocument.getSigner() != null) {
+                            ProcActor signerProcActor = outgoingDocumentService
+                                    .createProcActor("signer", procInstance, outgoingDocument.getSigner().getUser());
+                            procActors.add(signerProcActor);
+                        }
+                        procInstance.setProcActors(procActors);
+                        return true;
+                    }
+                    return false;
+                })
                 .init(PROCESS_CODE, getEditedEntity());
-
-        if (getEditedEntity().getStatus().getId().equals(3)) {
+        int entityStatus = getEditedEntity().getStatus().getId();
+        log.info("EditedEntityStatus = {}", entityStatus);
+        if (entityStatus == 3) {
             mainTabSheet.getTab("registrationTab").setEnabled(true);
         }
     }
@@ -98,14 +133,37 @@ public class OutgoingDocumentEdit extends StandardEditor<OutgoingDocument> {
     }
 
     @Subscribe
-    protected void beforeCommitChanges(BeforeCommitChangesEvent event) {
-        OutgoingDocument document = getEditedEntity();
+    protected void afterCommitChanges(AfterCommitChangesEvent event) {
+        OutgoingDocument document = dataManager.load(OutgoingDocument.class)
+                .query("select e from edms_OutgoingDocument e where e.id = :id")
+                .parameter("id", getEditedEntity().getId())
+                .view("outgoingDocument-editView")
+                .one();
         LocalDate localDate = document.getDateCreation()
                 .toInstant()
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate();
-        document.setTitle(outgoingDocumentService.setTitleForNewDocument(document.getDocumentType(), document.getRegNumber(),
-                localDate, document.getDestination().getShortTitle(), document.getTheme()));
+        document.setTitle(outgoingDocumentService.setTitleForNewDocument(document.getDocumentType(),
+                document.getRegNumber(),
+                localDate,
+                document.getDestination().getShortTitle(),
+                document.getTheme()));
+        if (document.getStatus().getId() == 2) {
+            document.setDateChange(timeSource.currentTimestamp());
+        }
+        document.setReconcilationStartDate(procActionsFragment
+                .getProcInstance()
+                .getStartDate());
+        Date endDate = procActionsFragment
+                .getProcInstance()
+                .getEndDate();
+        if (endDate != null) {
+            document.setReconcilationCompleteDate(endDate);
+        }
+        if (document.getUpdateTs() != null){
+            document.setDateChange(document.getUpdateTs());
+        }
+        dataManager.commit(document);
     }
 
     @Subscribe("logbookField")
@@ -116,8 +174,9 @@ public class OutgoingDocumentEdit extends StandardEditor<OutgoingDocument> {
                 .toInstant()
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate();
-        document.setRegNumber(outgoingDocumentService.setRegNumberFromTemplate(currentLogbook.getNumberFormat(), localDate,
-                currentLogbook.getNumberOfDigits()));
+        document.setRegNumber(outgoingDocumentService
+                .setRegNumberFromTemplate(currentLogbook.getNumberFormat(), localDate,
+                        currentLogbook.getNumberOfDigits()));
         document.setRegistrationDate(timeSource.currentTimestamp());
     }
 
@@ -135,7 +194,6 @@ public class OutgoingDocumentEdit extends StandardEditor<OutgoingDocument> {
                     .withCaption("File is uploaded to temporary storage at " + file.getAbsolutePath())
                     .show();
         }
-
         FileDescriptor fd = addAttachmentField.getFileDescriptor();
         try {
             fileUploadingAPI.putFileIntoStorage(addAttachmentField.getFileId(), fd);
@@ -161,9 +219,9 @@ public class OutgoingDocumentEdit extends StandardEditor<OutgoingDocument> {
                 .show();
     }
 
-    public void downloadFile(Component source){
+    public void downloadFile(Component source) {
         FileDescriptor fd = filesTable.getSingleSelected();
-        if (fd != null){
+        if (fd != null) {
             exportDisplay.show(fd);
         }
     }

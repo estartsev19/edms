@@ -22,19 +22,19 @@ public class OutgoingDocumentServiceBean implements OutgoingDocumentService {
     private static final String PROCESS_CODE = "documentApproval";
 
     @Inject
-    DataManager dm;
+    private DataManager dm;
 
     @Inject
-    Metadata metadata;
+    private Metadata metadata;
 
     @Inject
-    EntityCodeCreator codeCreator;
+    private EntityCodeCreator codeCreator;
 
     @Inject
-    UserSessionSource userSessionSource;
+    private UserSessionSource userSessionSource;
 
     @Inject
-    BpmEntitiesService bpmEntitiesService;
+    private BpmEntitiesService bpmEntitiesService;
 
     @Override
     public Worker getCurrentWorker() {
@@ -95,9 +95,7 @@ public class OutgoingDocumentServiceBean implements OutgoingDocumentService {
     public String setTitleForNewDocument(DocumentType documentType, String regNumber, LocalDate date,
                                          String destination, String theme) {
         if (regNumber == null) {
-            return documentType.getTitle() + " от " +
-                    date.getDayOfMonth() + "." + date.getMonthValue() + "." + date.getYear()
-                    + " в " + destination + ", " + theme;
+            return documentType.getTitle() + " " + destination + ", " + theme;
         }
         return documentType.getTitle() + " № " + regNumber + " от " +
                 date.getDayOfMonth() + "." + date.getMonthValue() + "." + date.getYear()
