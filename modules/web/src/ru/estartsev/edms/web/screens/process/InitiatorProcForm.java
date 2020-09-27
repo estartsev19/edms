@@ -8,13 +8,10 @@ import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.gui.WindowParam;
 import com.haulmont.cuba.gui.components.Button;
 import com.haulmont.cuba.gui.components.LookupField;
-import com.haulmont.cuba.gui.components.Table;
-import com.haulmont.cuba.gui.components.Window;
 import com.haulmont.cuba.gui.model.CollectionContainer;
 import com.haulmont.cuba.gui.screen.*;
 import com.haulmont.cuba.security.entity.User;
 import org.slf4j.Logger;
-import ru.estartsev.edms.entity.OutgoingDocument;
 import ru.estartsev.edms.entity.Worker;
 import ru.estartsev.edms.service.entityServices.OutgoingDocumentService;
 
@@ -38,23 +35,16 @@ public class InitiatorProcForm extends Screen implements ProcForm {
     protected ProcTask procTask;
 
     @Inject
-    LookupField<Worker> workerLookupField;
+    private LookupField<Worker> workerLookupField;
 
     @Inject
-    CollectionContainer<ProcActor> procActorDc;
+    private CollectionContainer<ProcActor> procActorDc;
 
     @Inject
-    OutgoingDocumentService outgoingDocumentService;
+    private OutgoingDocumentService outgoingDocumentService;
 
     @Inject
-    Button addActorButton;
-
-    @Inject
-    Logger log;
-
-    @Inject
-    Table<ProcActor> procActorsTable;
-
+    private Logger log;
 
     @Subscribe
     public void onInit(InitEvent event) {
@@ -64,7 +54,6 @@ public class InitiatorProcForm extends Screen implements ProcForm {
                 .list();
         workerLookupField.setOptionsList(workerList);
         procActorDc.setItems(procInstance.getProcActors());
-        log.info("ProcTask: {}", procTask);
     }
 
     @Subscribe
@@ -79,6 +68,7 @@ public class InitiatorProcForm extends Screen implements ProcForm {
             ProcActor reconcilerProcActor = outgoingDocumentService.createProcActor("reconciling", procInstance, reconciler);
             Set<ProcActor> procActorSet = procInstance.getProcActors();
             procActorSet.add(reconcilerProcActor);
+            procActorDc.setItems(procInstance.getProcActors());
         }
     }
 

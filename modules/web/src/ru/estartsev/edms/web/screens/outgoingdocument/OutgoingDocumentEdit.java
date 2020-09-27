@@ -40,6 +40,9 @@ public class OutgoingDocumentEdit extends StandardEditor<OutgoingDocument> {
     private CollectionLoader<ProcAttachment> procAttachmentsDl;
 
     @Inject
+    private CollectionLoader<ProcTask> procTasksDl;
+
+    @Inject
     private InstanceContainer<OutgoingDocument> outgoingDocumentDc;
 
     @Inject
@@ -81,12 +84,19 @@ public class OutgoingDocumentEdit extends StandardEditor<OutgoingDocument> {
     @Inject
     private Form processForm;
 
+    @Inject
+    private Form mainForm;
+
+    @Inject
+    private Form filesForm;
 
     @Subscribe
     private void onBeforeShow(BeforeShowEvent event) {
         outgoingDocumentDl.load();
         procAttachmentsDl.setParameter("entityId", outgoingDocumentDc.getItem().getId());
         procAttachmentsDl.load();
+        procTasksDl.setParameter("entityId", outgoingDocumentDc.getItem().getId());
+        procTasksDl.load();
         procActionsFragment.initializer()
                 .standard()
                 .setBeforeStartProcessPredicate(() -> {
@@ -122,11 +132,29 @@ public class OutgoingDocumentEdit extends StandardEditor<OutgoingDocument> {
                 .init(PROCESS_CODE, getEditedEntity());
         int entityStatus = getEditedEntity().getStatus().getId();
         log.info("EditedEntityStatus = {}", entityStatus);
-        if (entityStatus == 3) {
+        if (entityStatus == 3 && userSessionSource.getUserSession().getUser()
+                .equals(getEditedEntity().getExecutor().getUser())) {
             mainTabSheet.getTab("registrationTab").setEnabled(true);
+            processForm.setEnabled(false);
         }
         if (entityStatus == 5) {
             processForm.setEnabled(false);
+        }
+        if (entityStatus == 2 || entityStatus == 3 || entityStatus == 5) {
+            mainForm.setEnabled(false);
+            filesForm.setEnabled(false);
+        }
+        if (entityStatus == 4 && userSessionSource.getUserSession().getUser()
+                .equals(getEditedEntity().getExecutor().getUser())){
+            mainForm.setEnabled(true);
+            filesForm.setEnabled(true);
+        } else {
+            mainForm.setEnabled(false);
+            filesForm.setEnabled(false);
+        }
+        if (entityStatus == 1) {
+            mainForm.setEnabled(true);
+            filesForm.setEnabled(true);
         }
     }
 
@@ -137,6 +165,22 @@ public class OutgoingDocumentEdit extends StandardEditor<OutgoingDocument> {
         document.setAuthor(userSessionSource.getUserSession().getUser());
         document.setExecutor(outgoingDocumentService.getCurrentWorker());
         document.setStatus(OutgoingDocumentStatus.fromId(1));
+    }
+
+    @Subscribe
+    protected void onBeforeClose(BeforeCloseEvent event){
+        int entityStatus = getEditedEntity().getStatus().getId();
+        if (entityStatus == 3 && userSessionSource.getUserSession().getUser()
+                .equals(getEditedEntity().getExecutor().getUser())){
+            if (getEditedEntity().getLogbook() == null){
+                notifications.create()
+                        .withCaption("Укажите журнал регистрации")
+                        .show();
+                event.preventWindowClose();
+                processForm.setEnabled(false);
+            }
+        }
+        getScreenData().loadAll();
     }
 
     @Subscribe
@@ -158,7 +202,7 @@ public class OutgoingDocumentEdit extends StandardEditor<OutgoingDocument> {
         if (document.getStatus().getId() == 2) {
             document.setDateChange(timeSource.currentTimestamp());
         }
-         if (document.getUpdateTs() != null) {
+        if (document.getUpdateTs() != null) {
             document.setDateChange(document.getUpdateTs());
         }
         dataManager.commit(document);
@@ -176,6 +220,7 @@ public class OutgoingDocumentEdit extends StandardEditor<OutgoingDocument> {
                 .setRegNumberFromTemplate(currentLogbook.getNumberFormat(), localDate,
                         currentLogbook.getNumberOfDigits()));
         document.setRegistrationDate(timeSource.currentTimestamp());
+        processForm.setEnabled(true);
     }
 
     @Subscribe("actField")

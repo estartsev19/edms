@@ -74,4 +74,13 @@
         <property name="startedBy" view="_minimal"/>
         <property name="procActors" view="_minimal"/>
     </view>
+    <view entity="bpm$ProcTask" name="procTask-view" extends="procTask-complete">
+        <property name="procActor" view="_minimal">
+            <property name="procRole">
+                <property name="name"/>
+                <property name="code"/>
+                <property name="procDefinition" view="_minimal"/>
+            </property>
+        </property>
+    </view>
 </views>

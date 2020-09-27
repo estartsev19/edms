@@ -20,6 +20,16 @@
                 </query>
             </loader>
         </collection>
+        <collection id="procTasksDc"
+                    class="com.haulmont.bpm.entity.ProcTask"
+                    view="procTask-view">
+            <loader id="procTasksDl">
+                <query><![CDATA[select e from bpm$ProcTask e
+                                where e.procInstance.entity.entityId  = :entityId
+                                order by e.createTs]]>
+                </query>
+            </loader>
+        </collection>
     </data>
     <dialogMode height="600"
                 width="800"/>
@@ -27,7 +37,7 @@
         <scrollBox id="scrollBox" spacing="true">
             <tabSheet id="mainTabSheet">
                 <tab id="mainTab" caption="Основная" margin="true" spacing="true">
-                    <form id="mainForm" dataContainer="outgoingDocumentDc">
+                    <form id="mainForm" dataContainer="outgoingDocumentDc" enable="true">
                         <column width="350px">
                             <pickerField id="documentTypeField" property="documentType">
                                 <actions>
@@ -62,7 +72,7 @@
                     </form>
                 </tab>
                 <tab id="fileTab" caption="Документы" spacing="true" margin="true">
-                    <form id="filesForm" dataContainer="outgoingDocumentDc">
+                    <form id="filesForm" dataContainer="outgoingDocumentDc" enable="true">
                         <column width="350px">
                             <groupBox caption="Документы"
                                       height="300px"
@@ -77,8 +87,8 @@
                                     <buttonsPanel>
                                         <upload id="addAttachmentField"/>
                                         <button id="downloadButton"
-                                                caption="Скачать"
-                                                invoke="downloadFile"></button>
+                                                caption="msg://downloadFileButton"
+                                                invoke="downloadFile"/>
                                     </buttonsPanel>
                                 </table>
 
@@ -92,7 +102,6 @@
                             <pickerField id="logbookField" property="logbook">
                                 <actions>
                                     <action id="lookup" type="picker_lookup"/>
-                                    <action id="clear" type="picker_clear"/>
                                 </actions>
                             </pickerField>
                             <textField id="regNumberField2" property="regNumber" editable="false"/>
@@ -109,7 +118,18 @@
                     </form>
                 </tab>
                 <tab id="reconcilingTab" caption="Согласование" spacing="true" margin="true">
-                    <form id="processForm">
+                    <hbox id="horizontalBox" spacing="true">
+                    <table id="procTasksTable" dataContainer="procTasksDc" width="80%" >
+                        <columns>
+                            <column id="procActor" />
+                            <column id="startDate" />
+                            <column id="endDate" />
+                            <column id="outcome" />
+                            <column id="comment" />
+                        </columns>
+                        <rowsCount/>
+                    </table>
+                    <form id="processForm" width="AUTO">
                         <groupBox id="procActionsBox"
                                   caption="msg://process"
                                   spacing="true"
@@ -119,6 +139,7 @@
                                       screen="bpm_ProcActionsFragment"/>
                         </groupBox>
                     </form>
+                    </hbox>
                 </tab>
             </tabSheet>
         </scrollBox>

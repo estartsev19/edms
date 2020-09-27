@@ -46,6 +46,7 @@
                 <button id="createBtn" action="outgoingDocumentsTable.create"/>
                 <button id="editBtn" action="outgoingDocumentsTable.edit"/>
                 <button id="removeBtn" action="outgoingDocumentsTable.remove"/>
+                <button id="printReportBtn" caption="msg://printReportBtn"/>
             </buttonsPanel>
         </groupTable>
         <hbox id="lookupActions" spacing="true" visible="false">
