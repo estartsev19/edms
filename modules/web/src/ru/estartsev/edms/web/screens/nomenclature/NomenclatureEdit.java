@@ -1,8 +1,9 @@
 package ru.estartsev.edms.web.screens.nomenclature;
 
+import com.google.common.base.Strings;
 import com.haulmont.cuba.gui.screen.*;
 import ru.estartsev.edms.entity.Nomenclature;
-import ru.estartsev.edms.service.entityServices.NomenclatureService;
+import ru.estartsev.edms.service.EntityCodeCreateService;
 
 import javax.inject.Inject;
 
@@ -13,13 +14,13 @@ import javax.inject.Inject;
 public class NomenclatureEdit extends StandardEditor<Nomenclature> {
 
     @Inject
-    NomenclatureService nomenclatureService;
+    private EntityCodeCreateService entityCodeCreateService;
 
     @Subscribe
     protected void beforeCommitChanges(BeforeCommitChangesEvent event) {
         Nomenclature nomenclature = getEditedEntity();
-        if (nomenclature.getCode() == null) {
-            nomenclature.setCode(nomenclatureService.createCode());
+        if (Strings.isNullOrEmpty(nomenclature.getCode())) {
+            nomenclature.setCode(entityCodeCreateService.createCode("НД", "nomenclatureService"));
         }
     }
 }

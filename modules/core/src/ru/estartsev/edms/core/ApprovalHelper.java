@@ -13,9 +13,13 @@ public class ApprovalHelper {
     public static final String NAME = "edms_ApprovalHelper";
 
     @Inject
-    DataManager dataManager;
+    private DataManager dataManager;
 
-
+    /**
+     * Метод обновляет статус исходящего документа в процессе "documentApproval"
+     * @param entityId - id сущности
+     * @param status - значение статуса исходящего документа (enum OutgoingDocumentStatus)
+     */
     public void updateState(UUID entityId, int status) {
             OutgoingDocument outgoingDocument = dataManager.load(OutgoingDocument.class)
                     .query("select e from edms_OutgoingDocument e where e.id = :id")

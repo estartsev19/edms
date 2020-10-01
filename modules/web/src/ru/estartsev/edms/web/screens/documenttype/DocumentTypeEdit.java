@@ -1,8 +1,9 @@
 package ru.estartsev.edms.web.screens.documenttype;
 
+import com.google.common.base.Strings;
 import com.haulmont.cuba.gui.screen.*;
 import ru.estartsev.edms.entity.DocumentType;
-import ru.estartsev.edms.service.entityServices.DocumentTypeService;
+import ru.estartsev.edms.service.EntityCodeCreateService;
 
 import javax.inject.Inject;
 
@@ -13,13 +14,13 @@ import javax.inject.Inject;
 public class DocumentTypeEdit extends StandardEditor<DocumentType> {
 
     @Inject
-    DocumentTypeService documentTypeService;
+    private EntityCodeCreateService entityCodeCreateService;
 
     @Subscribe
     protected void beforeCommitChanges(BeforeCommitChangesEvent event) {
         DocumentType documentType = getEditedEntity();
-        if (documentType.getCode() == null) {
-            documentType.setCode(documentTypeService.createCode());
+        if (Strings.isNullOrEmpty(documentType.getCode())) {
+            documentType.setCode(entityCodeCreateService.createCode("ВД", "documentTypeSequence"));
         }
     }
 }

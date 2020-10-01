@@ -34,7 +34,7 @@ public class OutgoingDocumentEdit extends StandardEditor<OutgoingDocument> {
     private static final String PROCESS_CODE = "documentApproval";
 
     @Inject
-    OutgoingDocumentService outgoingDocumentService;
+    private OutgoingDocumentService outgoingDocumentService;
 
     @Inject
     private CollectionLoader<ProcAttachment> procAttachmentsDl;
@@ -46,7 +46,7 @@ public class OutgoingDocumentEdit extends StandardEditor<OutgoingDocument> {
     private InstanceContainer<OutgoingDocument> outgoingDocumentDc;
 
     @Inject
-    protected ProcActionsFragment procActionsFragment;
+    private ProcActionsFragment procActionsFragment;
 
     @Inject
     private InstanceLoader<OutgoingDocument> outgoingDocumentDl;
@@ -101,61 +101,61 @@ public class OutgoingDocumentEdit extends StandardEditor<OutgoingDocument> {
                 .standard()
                 .setBeforeStartProcessPredicate(() -> {
                     if (commitChanges().getStatus() == OperationResult.Status.SUCCESS) {
-                        ProcInstance procInstance = procActionsFragment.getProcInstance();
-                        OutgoingDocument outgoingDocument = getEditedEntity();
-                        Set<ProcActor> procActors = new HashSet<>();
-                        Worker executor = dataManager.load(Worker.class).view("worker-view-with-image")
-                                .id(outgoingDocument.getExecutor().getId())
-                                .one();
-                        User executorUser = executor.getUser();
-                        ProcActor initiatorProcActor = outgoingDocumentService
-                                .createProcActor("initiator", procInstance, executorUser);
-                        User managerUser = outgoingDocument
-                                .getExecutor()
-                                .getDepartment()
-                                .getDepartmentManager()
-                                .getUser();
-                        ProcActor managerProcActor = outgoingDocumentService
-                                .createProcActor("manager", procInstance, managerUser);
-                        procActors.add(initiatorProcActor);
-                        procActors.add(managerProcActor);
-                        if (outgoingDocument.getSigner() != null) {
-                            ProcActor signerProcActor = outgoingDocumentService
-                                    .createProcActor("signer", procInstance, outgoingDocument.getSigner().getUser());
-                            procActors.add(signerProcActor);
-                        }
-                        procInstance.setProcActors(procActors);
+                        setPredicate();
                         return true;
                     }
                     return false;
                 })
                 .init(PROCESS_CODE, getEditedEntity());
-        int entityStatus = getEditedEntity().getStatus().getId();
-        log.info("EditedEntityStatus = {}", entityStatus);
-        if (entityStatus == 3 && userSessionSource.getUserSession().getUser()
-                .equals(getEditedEntity().getExecutor().getUser())) {
-            mainTabSheet.getTab("registrationTab").setEnabled(true);
+
+        OutgoingDocumentStatus documentStatus = getEditedEntity().getStatus();
+        log.info("Entity status {}", documentStatus);
+        if (documentStatus.equals(OutgoingDocumentStatus.NEW)) {
+            enableMainAndFilesForm(true);
+        } else if (documentStatus.equals(OutgoingDocumentStatus.ON_APPROVAL)) {
+            enableMainAndFilesForm(false);
+        } else if (documentStatus.equals(OutgoingDocumentStatus.ON_SIGNING)) {
+            enableMainAndFilesForm(false);
+            if (userSessionSource.getUserSession().getUser()
+                    .equals(getEditedEntity().getExecutor().getUser())) {
+                mainTabSheet.getTab("registrationTab").setEnabled(true);
+                processForm.setEnabled(false);
+            }
+        } else if (documentStatus.equals(OutgoingDocumentStatus.ON_COMPLETION) &&
+                userSessionSource.getUserSession().getUser()
+                        .equals(getEditedEntity().getExecutor().getUser())) {
+            enableMainAndFilesForm(true);
+        } else if (documentStatus.equals(OutgoingDocumentStatus.REGISTERED)) {
+            enableMainAndFilesForm(false);
             processForm.setEnabled(false);
         }
-        if (entityStatus == 5) {
-            processForm.setEnabled(false);
+    }
+
+    private void setPredicate() {
+        ProcInstance procInstance = procActionsFragment.getProcInstance();
+        OutgoingDocument outgoingDocument = getEditedEntity();
+        Set<ProcActor> procActors = new HashSet<>();
+        Worker executor = dataManager.load(Worker.class).view("worker-view-with-image")
+                .id(outgoingDocument.getExecutor().getId())
+                .one();
+        User executorUser = executor.getUser();
+        ProcActor initiatorProcActor = outgoingDocumentService
+                .createProcActor("initiator", procInstance, executorUser);
+        User managerUser = outgoingDocument
+                .getExecutor()
+                .getDepartment()
+                .getDepartmentManager()
+                .getUser();
+        ProcActor managerProcActor = outgoingDocumentService
+                .createProcActor("manager", procInstance, managerUser);
+        procActors.add(initiatorProcActor);
+        procActors.add(managerProcActor);
+        if (outgoingDocument.getSigner() != null) {
+            ProcActor signerProcActor = outgoingDocumentService
+                    .createProcActor("signer", procInstance, outgoingDocument.getSigner().getUser());
+            procActors.add(signerProcActor);
         }
-        if (entityStatus == 2 || entityStatus == 3 || entityStatus == 5) {
-            mainForm.setEnabled(false);
-            filesForm.setEnabled(false);
-        }
-        if (entityStatus == 4 && userSessionSource.getUserSession().getUser()
-                .equals(getEditedEntity().getExecutor().getUser())){
-            mainForm.setEnabled(true);
-            filesForm.setEnabled(true);
-        } else {
-            mainForm.setEnabled(false);
-            filesForm.setEnabled(false);
-        }
-        if (entityStatus == 1) {
-            mainForm.setEnabled(true);
-            filesForm.setEnabled(true);
-        }
+        procInstance.setProcActors(procActors);
     }
 
     @Subscribe
@@ -168,28 +168,21 @@ public class OutgoingDocumentEdit extends StandardEditor<OutgoingDocument> {
     }
 
     @Subscribe
-    protected void onBeforeClose(BeforeCloseEvent event){
-        int entityStatus = getEditedEntity().getStatus().getId();
-        if (entityStatus == 3 && userSessionSource.getUserSession().getUser()
-                .equals(getEditedEntity().getExecutor().getUser())){
-            if (getEditedEntity().getLogbook() == null){
-                notifications.create()
-                        .withCaption("Укажите журнал регистрации")
-                        .show();
-                event.preventWindowClose();
-                processForm.setEnabled(false);
-            }
+    protected void onBeforeClose(BeforeCloseEvent event) {
+        if (getEditedEntity().getStatus().equals(OutgoingDocumentStatus.ON_SIGNING) && userSessionSource.getUserSession().getUser()
+                .equals(getEditedEntity().getExecutor().getUser()) && getEditedEntity().getLogbook() == null) {
+            notifications.create()
+                    .withCaption("Укажите журнал регистрации")
+                    .show();
+            event.preventWindowClose();
+            processForm.setEnabled(false);
         }
         getScreenData().loadAll();
     }
 
     @Subscribe
     protected void afterCommitChanges(AfterCommitChangesEvent event) {
-        OutgoingDocument document = dataManager.load(OutgoingDocument.class)
-                .query("select e from edms_OutgoingDocument e where e.id = :id")
-                .parameter("id", getEditedEntity().getId())
-                .view("outgoingDocument-editView")
-                .one();
+        OutgoingDocument document = outgoingDocumentService.getCurrentOutgoingDocument(getEditedEntity().getId());
         LocalDate localDate = document.getDateCreation()
                 .toInstant()
                 .atZone(ZoneId.systemDefault())
@@ -199,13 +192,18 @@ public class OutgoingDocumentEdit extends StandardEditor<OutgoingDocument> {
                 localDate,
                 document.getDestination().getShortTitle(),
                 document.getTheme()));
-        if (document.getStatus().getId() == 2) {
+        if (document.getStatus().equals(OutgoingDocumentStatus.ON_APPROVAL)) {
             document.setDateChange(timeSource.currentTimestamp());
         }
         if (document.getUpdateTs() != null) {
             document.setDateChange(document.getUpdateTs());
         }
         dataManager.commit(document);
+    }
+
+    private void enableMainAndFilesForm(boolean state) {
+        mainForm.setEnabled(state);
+        filesForm.setEnabled(state);
     }
 
     @Subscribe("logbookField")
@@ -234,14 +232,17 @@ public class OutgoingDocumentEdit extends StandardEditor<OutgoingDocument> {
         File file = fileUploadingAPI.getFile(addAttachmentField.getFileId());
         if (file != null) {
             notifications.create()
-                    .withCaption("File is uploaded to temporary storage at " + file.getAbsolutePath())
+                    .withCaption("Файл загружен в " + file.getAbsolutePath())
                     .show();
         }
         FileDescriptor fd = addAttachmentField.getFileDescriptor();
         try {
             fileUploadingAPI.putFileIntoStorage(addAttachmentField.getFileId(), fd);
         } catch (FileStorageException e) {
-            throw new RuntimeException("Error saving file to FileStorage", e);
+            log.error("Error saving file to FileStorage", e.fillInStackTrace());
+            notifications.create()
+                    .withCaption("При загрузке файла произошла ошибка")
+                    .show();
         }
         List<FileDescriptor> filesList = getEditedEntity().getFile();
         if (filesList == null) {

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <menu-config xmlns="http://schemas.haulmont.com/cuba/menu.xsd">
-    <menu id="application-edms" insertBefore="administration" >
+    <menu id="application-edms" insertBefore="bpm" >
         <item screen="edms_Organization.browse"/>
         <item screen="edms_Logbook.browse"/>
         <item screen="edms_DocumentType.browse"/>

@@ -11,14 +11,9 @@
         <property name="serverSelector" ref="cuba_ServerSelector"/>
         <property name="remoteServices">
             <map>
-                <entry key="edms_OrganizationService" value="ru.estartsev.edms.service.OrganizationService"/>
-                <entry key="edms_LogbookService" value="ru.estartsev.edms.service.entityServices.LogbookService"/>
-                <entry key="edms_DocumentTypeService"
-                       value="ru.estartsev.edms.service.entityServices.DocumentTypeService"/>
-                <entry key="edms_NomenclatureService"
-                       value="ru.estartsev.edms.service.entityServices.NomenclatureService"/>
                 <entry key="edms_OutgoingDocumentService"
                        value="ru.estartsev.edms.service.entityServices.OutgoingDocumentService"/>
+                <entry key="edms_EntityCodeCreateService" value="ru.estartsev.edms.service.EntityCodeCreateService"/>
             </map>
         </property>
     </bean>

@@ -8,18 +8,24 @@ import com.haulmont.cuba.core.global.*;
 
 import com.haulmont.cuba.security.entity.User;
 import org.springframework.stereotype.Service;
-import ru.estartsev.edms.core.EntityCodeCreator;
 import ru.estartsev.edms.entity.DocumentType;
+import ru.estartsev.edms.entity.OutgoingDocument;
 import ru.estartsev.edms.entity.Worker;
+import ru.estartsev.edms.service.EntityCodeCreateService;
 
 import javax.inject.Inject;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Service(OutgoingDocumentService.NAME)
 public class OutgoingDocumentServiceBean implements OutgoingDocumentService {
 
     private static final String PROCESS_CODE = "documentApproval";
+    private static final String day = "DD";
+    private static final String month = "MM";
+    private static final String yearFourDigits = "YYYY";
+    private static final String yearTwoDigits = "YY";
 
     @Inject
     private DataManager dm;
@@ -28,7 +34,7 @@ public class OutgoingDocumentServiceBean implements OutgoingDocumentService {
     private Metadata metadata;
 
     @Inject
-    private EntityCodeCreator codeCreator;
+    private EntityCodeCreateService entityCodeCreateService;
 
     @Inject
     private UserSessionSource userSessionSource;
@@ -36,6 +42,11 @@ public class OutgoingDocumentServiceBean implements OutgoingDocumentService {
     @Inject
     private BpmEntitiesService bpmEntitiesService;
 
+    /**
+     * Метод возвращает значение текущего работника
+     *
+     * @return возвращает значение текущего работника
+     */
     @Override
     public Worker getCurrentWorker() {
         User currentUser = userSessionSource.getUserSession().getUser();
@@ -45,45 +56,54 @@ public class OutgoingDocumentServiceBean implements OutgoingDocumentService {
                 .one();
     }
 
+    /**
+     * Метод позволяет получить редактируемый исходящий документ
+     *
+     * @param id - ID исходящего документа
+     * @return возвращает редактируемый в настоящий момент исходящий документ
+     */
+    @Override
+    public OutgoingDocument getCurrentOutgoingDocument(UUID id) {
+        return dm.load(OutgoingDocument.class)
+                .query("select e from edms_OutgoingDocument e where e.id = :id")
+                .parameter("id", id)
+                .view("outgoingDocument-editView")
+                .one();
+    }
+
+    /**
+     * Метод создает рег. номер сущности "Исходящий документ"
+     *
+     * @param template       - макрос для определения формата номера
+     * @param date           - дата регистрации
+     * @param numberOfDigits - количество цифр в номере
+     * @return возвращает регистрационный номер
+     */
     @Override
     public String setRegNumberFromTemplate(String template, LocalDate date, int numberOfDigits) {
-        int number = Integer.valueOf(codeCreator.createCode("", "outgoingDocumentSequence"));
+        int number = Integer.parseInt(entityCodeCreateService.createCode("", "outgoingDocumentSequence"));
         String zeroString = "";
         for (int i = 0; i < numberOfDigits; i++) {
             zeroString = zeroString.concat("0");
         }
         DecimalFormat df = new DecimalFormat(zeroString);
         String str = df.format(number);
-        if (template.contains("DD")) {
-            int dayNum = date.getDayOfMonth();
-            String day = "";
-            if (dayNum < 10) {
-                day = day.concat("0" + dayNum);
-            } else {
-                day = day.concat(String.valueOf(dayNum));
-            }
-            template = template.replace("DD", day);
+        if (template.contains(day)) {
+            template = template.replace(day, createDayOrMonthString(date.getDayOfMonth()));
         }
-        if (template.contains("MM")) {
-            int monthNum = date.getMonthValue();
-            String month = "";
-            if (monthNum < 10) {
-                month = month.concat("0" + monthNum);
-            } else {
-                month = month.concat(String.valueOf(monthNum));
-            }
-            template = template.replace("MM", month);
+        if (template.contains(month)) {
+            template = template.replace(month, createDayOrMonthString(date.getMonthValue()));
         }
-        if (template.contains("YYYY")) {
+        if (template.contains(yearFourDigits)) {
             String year = String.valueOf(date.getYear());
-            template = template.replace("YYYY", year);
+            template = template.replace(yearFourDigits, year);
             template = template.concat(str);
             return template;
         }
-        if (template.contains("YY")) {
+        if (template.contains(yearTwoDigits)) {
             int yearNum = date.getYear() % 100;
             String year = String.valueOf(yearNum);
-            template = template.replace("YY", year);
+            template = template.replace(yearTwoDigits, year);
             template = template.concat(str);
             return template;
         }
@@ -91,25 +111,52 @@ public class OutgoingDocumentServiceBean implements OutgoingDocumentService {
         return template;
     }
 
+    /**
+     * Метод создает наименование сущности "Исходящий документ"
+     *
+     * @param documentType - вид документа
+     * @param regNumber    - рег. номер
+     * @param date         - дата регистрации
+     * @param destination  - адресат
+     * @param theme        - тема
+     * @return возвращает наименование сущности
+     */
     @Override
     public String setTitleForNewDocument(DocumentType documentType, String regNumber, LocalDate date,
                                          String destination, String theme) {
         if (regNumber == null) {
-            return documentType.getTitle() + " " + destination + ", " + theme;
+            String template = "%s %s, %s";
+            return String.format(template, documentType.getTitle(), destination, theme);
         }
-        return documentType.getTitle() + " № " + regNumber + " от " +
-                date.getDayOfMonth() + "." + date.getMonthValue() + "." + date.getYear()
-                + " в " + destination + ", " + theme;
+        String template = "%s № %s от %02d.%02d.%d в %s, %s";
+        return String.format(template, documentType.getTitle(), regNumber, date.getDayOfMonth(),
+                date.getMonthValue(), date.getYear(), destination, theme);
     }
 
+    /**
+     * Метод присваивает процессным ролям пользователей
+     *
+     * @param procRoleCode - код процессной роли
+     * @param procInstance - экземпляр процесса
+     * @param user         - пользователь
+     * @return возвращает созданного участника процесса
+     */
     @Override
     public ProcActor createProcActor(String procRoleCode, ProcInstance procInstance, User user) {
-        ProcActor initiatorProcActor = metadata.create(ProcActor.class);
-        initiatorProcActor.setUser(user);
+        ProcActor procActor = metadata.create(ProcActor.class);
+        procActor.setUser(user);
         ProcRole initiatorProcRole = bpmEntitiesService.findProcRole(PROCESS_CODE, procRoleCode, View.MINIMAL);
-        initiatorProcActor.setProcRole(initiatorProcRole);
-        initiatorProcActor.setProcInstance(procInstance);
-        return initiatorProcActor;
+        procActor.setProcRole(initiatorProcRole);
+        procActor.setProcInstance(procInstance);
+        return procActor;
     }
 
+    private String createDayOrMonthString(int number) {
+        String str = "";
+        if (number < 10) {
+            return str.concat("0" + number);
+        } else {
+            return str.concat(String.valueOf(number));
+        }
+    }
 }

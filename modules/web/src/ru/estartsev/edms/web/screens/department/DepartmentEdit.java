@@ -13,17 +13,16 @@ import javax.inject.Inject;
 public class DepartmentEdit extends StandardEditor<Department> {
 
     @Inject
-    Notifications notifications;
-
+    private Notifications notifications;
 
     @Subscribe
-    protected void onBeforeClose(BeforeCloseEvent event) {
+    protected void onBeforeCommit(BeforeCommitChangesEvent event) {
         Department department = getEditedEntity();
         if (department.getLeadDepartment() != null && department.getLeadDepartment().getCode().equals(department.getCode())) {
                 notifications.create()
                         .withCaption("Текущее подразделение не может быть ведущим подразделением")
                         .show();
-                event.preventWindowClose();
+                event.preventCommit();
         }
     }
 }

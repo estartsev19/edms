@@ -32,12 +32,13 @@ public class InitiatorProcForm extends Screen implements ProcForm {
     private ProcInstance procInstance;
 
     @WindowParam
-    protected ProcTask procTask;
+    private ProcTask procTask;
 
     @Inject
     private LookupField<Worker> workerLookupField;
 
     @Inject
+
     private CollectionContainer<ProcActor> procActorDc;
 
     @Inject

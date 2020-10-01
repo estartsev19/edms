@@ -1,8 +1,9 @@
 package ru.estartsev.edms.web.screens.logbook;
 
+import com.google.common.base.Strings;
 import com.haulmont.cuba.gui.screen.*;
 import ru.estartsev.edms.entity.Logbook;
-import ru.estartsev.edms.service.entityServices.LogbookService;
+import ru.estartsev.edms.service.EntityCodeCreateService;
 
 import javax.inject.Inject;
 
@@ -13,13 +14,13 @@ import javax.inject.Inject;
 public class LogbookEdit extends StandardEditor<Logbook> {
 
     @Inject
-    LogbookService logbookService;
+    private EntityCodeCreateService entityCodeCreateService;
 
     @Subscribe
     protected void beforeCommitChanges(BeforeCommitChangesEvent event){
         Logbook logbook = getEditedEntity();
-        if (logbook.getCode() == null) {
-            logbook.setCode(logbookService.createCode());
+        if (Strings.isNullOrEmpty(logbook.getCode())) {
+            logbook.setCode(entityCodeCreateService.createCode("Ж", "logbookSequence"));
         }
     }
 }
