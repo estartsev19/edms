@@ -10,6 +10,7 @@ import javax.inject.Inject;
 @UiController("edms_DocumentType.edit")
 @UiDescriptor("document-type-edit.xml")
 @EditedEntityContainer("documentTypeDc")
+@DialogMode(forceDialog = true)
 @LoadDataBeforeShow
 public class DocumentTypeEdit extends StandardEditor<DocumentType> {
 

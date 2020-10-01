@@ -24,9 +24,10 @@
                 dataLoader="departmentsDl">
             <properties include=".*"/>
         </filter>
-        <groupTable id="departmentsTable"
-                    width="100%"
-                    dataContainer="departmentsDc">
+        <treeTable id="departmentsTable"
+                   width="100%"
+                   dataContainer="departmentsDc"
+                   hierarchyProperty="leadDepartment">
             <actions>
                 <action id="create" type="create"/>
                 <action id="edit" type="edit"/>
@@ -45,7 +46,7 @@
                 <button id="editBtn" action="departmentsTable.edit"/>
                 <button id="removeBtn" action="departmentsTable.remove"/>
             </buttonsPanel>
-        </groupTable>
+        </treeTable>
         <hbox id="lookupActions" spacing="true" visible="false">
             <button action="lookupSelectAction"/>
             <button action="lookupCancelAction"/>

@@ -10,6 +10,7 @@ import javax.inject.Inject;
 @UiController("edms_Organization.edit")
 @UiDescriptor("organization-edit.xml")
 @EditedEntityContainer("organizationDc")
+@DialogMode(forceDialog = true)
 @LoadDataBeforeShow
 public class OrganizationEdit extends StandardEditor<Organization> {
 

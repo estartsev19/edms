@@ -10,6 +10,7 @@ import javax.inject.Inject;
 @UiController("edms_Logbook.edit")
 @UiDescriptor("logbook-edit.xml")
 @EditedEntityContainer("logbookDc")
+@DialogMode(forceDialog = true)
 @LoadDataBeforeShow
 public class LogbookEdit extends StandardEditor<Logbook> {
 

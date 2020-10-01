@@ -18,18 +18,25 @@
                 <image id="image" property="photo" width="100px" height="100px" align="MIDDLE_CENTER"
                        scaleMode="CONTAIN"/>
                 <textField id="personnelNumberField" property="personnelNumber"/>
-                <pickerField id="userField" property="user"/>
+                <pickerField id="userField" property="user">
+                    <actions>
+                        <action id="lookup" type="picker_lookup"/>
+                        <action id="open" type="picker_open"/>
+                        <action id="clear" type="picker_clear"/>
+                    </actions>
+                </pickerField>
                 <textField id="lastNameField" property="lastName"/>
                 <textField id="firstNameField" property="firstName"/>
                 <textField id="patronymicField" property="patronymic"/>
                 <pickerField id="departmentField" property="department">
                     <actions>
                         <action id="lookup" type="picker_lookup"/>
+                        <action id="open" type="picker_open"/>
                         <action id="clear" type="picker_clear"/>
                     </actions>
                 </pickerField>
                 <textField id="emailField" property="email"/>
-                <maskedField id="phoneNumberField" mask="+7(###)###-##-##" property="phoneNumber"/>
+                <maskedField id="phoneNumberField" mask="+7(###)###-##-##" property="phoneNumber" valueMode="masked"/>
                 <upload fileStoragePutMode="IMMEDIATE" dataContainer="workerDc" property="photo" />
             </column>
         </form>

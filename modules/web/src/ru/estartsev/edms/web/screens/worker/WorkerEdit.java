@@ -9,6 +9,7 @@ import ru.estartsev.edms.entity.Worker;
 @UiController("edms_Worker.edit")
 @UiDescriptor("worker-edit.xml")
 @EditedEntityContainer("workerDc")
+@DialogMode(forceDialog = true)
 @LoadDataBeforeShow
 public class WorkerEdit extends StandardEditor<Worker> {
 
@@ -22,6 +23,12 @@ public class WorkerEdit extends StandardEditor<Worker> {
             }
             if (!Strings.isNullOrEmpty(user.getLastName())) {
                 worker.setLastName(user.getLastName());
+            }
+            if (!Strings.isNullOrEmpty(user.getMiddleName())) {
+                worker.setPatronymic(user.getMiddleName());
+            }
+            if (!Strings.isNullOrEmpty(user.getEmail())) {
+                worker.setEmail(user.getEmail());
             }
         }
     }

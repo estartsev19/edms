@@ -42,6 +42,7 @@
                             <pickerField id="documentTypeField" property="documentType">
                                 <actions>
                                     <action id="lookup" type="picker_lookup"/>
+                                    <action id="open" type="picker_open"/>
                                     <action id="clear" type="picker_clear"/>
                                 </actions>
                             </pickerField>
@@ -50,6 +51,7 @@
                             <pickerField id="destinationField" property="destination">
                                 <actions>
                                     <action id="lookup" type="picker_lookup"/>
+                                    <action id="open" type="picker_open"/>
                                     <action id="clear" type="picker_clear"/>
                                 </actions>
                             </pickerField>
@@ -59,6 +61,7 @@
                             <pickerField id="signerField" property="signer">
                                 <actions>
                                     <action id="lookup" type="picker_lookup"/>
+                                    <action id="open" type="picker_open"/>
                                     <action id="clear" type="picker_clear"/>
                                 </actions>
                             </pickerField>
@@ -102,6 +105,7 @@
                             <pickerField id="logbookField" property="logbook">
                                 <actions>
                                     <action id="lookup" type="picker_lookup"/>
+                                    <action id="open" type="picker_open"/>
                                 </actions>
                             </pickerField>
                             <textField id="regNumberField2" property="regNumber" editable="false"/>
@@ -110,6 +114,7 @@
                             <pickerField id="actField" property="act">
                                 <actions>
                                     <action id="lookup" type="picker_lookup"/>
+                                    <action id="open" type="picker_open"/>
                                     <action id="clear" type="picker_clear"/>
                                 </actions>
                             </pickerField>

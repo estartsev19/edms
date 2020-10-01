@@ -10,6 +10,7 @@ import javax.inject.Inject;
 @UiController("edms_Nomenclature.edit")
 @UiDescriptor("nomenclature-edit.xml")
 @EditedEntityContainer("nomenclatureDc")
+@DialogMode(forceDialog = true)
 @LoadDataBeforeShow
 public class NomenclatureEdit extends StandardEditor<Nomenclature> {
 
